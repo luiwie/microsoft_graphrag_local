@@ -4,7 +4,7 @@
 """The EmbeddingsLLM class."""
 
 from typing_extensions import Unpack
-
+import ollama
 from graphrag.llm.base import BaseLLM
 from graphrag.llm.types import (
     EmbeddingInput,
@@ -29,12 +29,8 @@ class OpenAIEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
     async def _execute_llm(
         self, input: EmbeddingInput, **kwargs: Unpack[LLMInput]
     ) -> EmbeddingOutput | None:
-        args = {
-            "model": self.configuration.model,
-            **(kwargs.get("model_parameters") or {}),
-        }
-        embedding = await self.client.embeddings.create(
-            input=input,
-            **args,
-        )
-        return [d.embedding for d in embedding.data]
+        embedding_list = []
+        for inp in input:
+            embedding = ollama.embeddings(model=self.configuration.model, prompt=inp)
+            embedding_list.append(embedding["embedding"])
+        return embedding_list
