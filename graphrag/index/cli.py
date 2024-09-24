@@ -125,7 +125,7 @@ def index_cli(
 
     if init:
         _initialize_project_at(root_dir, progress_reporter, local=local)
-        sys.exit(0)
+        return
 
     root = Path(root_dir).resolve()
     config = load_config(root, config_filepath)
@@ -157,7 +157,7 @@ def index_cli(
 
     if dryrun:
         info("Dry run complete, exiting...", True)
-        sys.exit(0)
+        return
 
     _register_signal_handlers(progress_reporter)
 
@@ -184,7 +184,7 @@ def index_cli(
     else:
         success("All workflows completed successfully.", True)
 
-    sys.exit(1 if encountered_errors else 0)
+    return None if not encountered_errors else sys.exit(1)
 
 
 def _initialize_project_at(path: str, reporter: ProgressReporter, local: bool) -> None:
