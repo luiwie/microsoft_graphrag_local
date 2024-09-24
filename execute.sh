@@ -1,0 +1,1 @@
+python -m graphrag.index --root ragdirs/ragdir_6 
