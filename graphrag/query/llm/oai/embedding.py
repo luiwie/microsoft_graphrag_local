@@ -7,6 +7,7 @@ import asyncio
 from collections.abc import Callable
 from typing import Any
 
+import ollama
 import numpy as np
 import tiktoken
 from tenacity import (
@@ -118,6 +119,17 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         chunk_embeddings = chunk_embeddings / np.linalg.norm(chunk_embeddings)
         return chunk_embeddings.tolist()
 
+    def _embed(self, text):
+        return (
+            self.sync_client.embeddings.create(  # type: ignore
+                input=text,
+                model=self.model,
+                **kwargs,  # type: ignore
+            )
+            .data[0]
+            .embedding
+            or []
+        )
     def _embed_with_retry(
         self, text: str | tuple, **kwargs: Any
     ) -> tuple[list[float], int]:
@@ -130,16 +142,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             for attempt in retryer:
                 with attempt:
-                    embedding = (
-                        self.sync_client.embeddings.create(  # type: ignore
-                            input=text,
-                            model=self.model,
-                            **kwargs,  # type: ignore
-                        )
-                        .data[0]
-                        .embedding
-                        or []
-                    )
+                    embedding = self._embed(text=text)
                     return (embedding, len(text))
         except RetryError as e:
             self._reporter.error(
@@ -151,6 +154,15 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             # TODO: why not just throw in this case?
             return ([], 0)
 
+    async def _aembed(self, text):
+        return (
+            await self.async_client.embeddings.create(  # type: ignore
+                    input=text,
+                    model=self.model,
+                    **kwargs,  # type: ignore
+                )
+            ).data[0].embedding or []
+         
     async def _aembed_with_retry(
         self, text: str | tuple, **kwargs: Any
     ) -> tuple[list[float], int]:
@@ -163,13 +175,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             async for attempt in retryer:
                 with attempt:
-                    embedding = (
-                        await self.async_client.embeddings.create(  # type: ignore
-                            input=text,
-                            model=self.model,
-                            **kwargs,  # type: ignore
-                        )
-                    ).data[0].embedding or []
+                    embedding = await self._aembed(text=text)
                     return (embedding, len(text))
         except RetryError as e:
             self._reporter.error(
@@ -180,3 +186,14 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         else:
             # TODO: why not just throw in this case?
             return ([], 0)
+
+class OpenAICompatibleOllamaEmbedding(OpenAIEmbedding):
+    def __init__(self, model: str = "nomic-embed-text", *args, **kwargs):
+        self.model = model
+        super().__init__(model=model, *args, **kwargs)
+
+    def _embed(self, text: str):
+        return ollama.embeddings(model=self.model, prompt=text)["embedding"]
+    
+    async def _ambed(self, text: str):
+        return ollama.embeddings(model=self.model, prompt=text)["embedding"]

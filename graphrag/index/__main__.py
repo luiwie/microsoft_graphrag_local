@@ -95,6 +95,11 @@ if __name__ == "__main__":
         default=None,
         type=str,
     )
+    parser.add_argument(
+        "--local",
+        help="Setup the project for local execution with Ollama",
+        action="store_true"
+    )
     args = parser.parse_args()
 
     if args.resume and args.update_index:
@@ -115,4 +120,5 @@ if __name__ == "__main__":
         init=args.init,
         skip_validations=args.skip_validations,
         output_dir=args.output,
+        local=args.local
     )

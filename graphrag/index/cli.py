@@ -24,7 +24,7 @@ from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
-from .init_content import INIT_DOTENV, INIT_YAML
+from .init_content import INIT_DOTENV, INIT_YAML, INIT_YAML_LOCAL
 from .progress import ProgressReporter, ReporterType
 from .progress.load_progress_reporter import load_progress_reporter
 from .validate_config import validate_config_names
@@ -104,6 +104,7 @@ def _register_signal_handlers(reporter: ProgressReporter):
 
 def index_cli(
     root_dir: str,
+    local: bool,
     init: bool,
     verbose: bool,
     resume: str,
@@ -123,7 +124,7 @@ def index_cli(
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
     if init:
-        _initialize_project_at(root_dir, progress_reporter)
+        _initialize_project_at(root_dir, progress_reporter, local=local)
         sys.exit(0)
 
     root = Path(root_dir).resolve()
@@ -186,7 +187,7 @@ def index_cli(
     sys.exit(1 if encountered_errors else 0)
 
 
-def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
+def _initialize_project_at(path: str, reporter: ProgressReporter, local: bool) -> None:
     """Initialize the project at the given path."""
     reporter.info(f"Initializing project at {path}")
     root = Path(path)
@@ -199,7 +200,10 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
         raise ValueError(msg)
 
     with settings_yaml.open("wb") as file:
-        file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
+        if local:   
+            file.write(INIT_YAML_LOCAL.encode(encoding="utf-8", errors="strict"))
+        else:
+            file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
 
     dotenv = root / ".env"
     if not dotenv.exists():

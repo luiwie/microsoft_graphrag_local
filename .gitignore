@@ -67,3 +67,7 @@ ragtest/
 .ragtest/
 .pipelines
 .pipeline
+
+# Custom ignores
+custom_graphrag_venv/
+ragdir*/

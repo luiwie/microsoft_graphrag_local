@@ -18,6 +18,7 @@ from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
 from graphrag.query.question_gen.system_prompt import QUESTION_SYSTEM_PROMPT
 
+
 log = logging.getLogger(__name__)
 
 
@@ -89,7 +90,6 @@ class LocalQuestionGen(BaseQuestionGen):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": question_text},
             ]
-
             response = await self.llm.agenerate(
                 messages=question_messages,
                 streaming=True,
@@ -97,8 +97,10 @@ class LocalQuestionGen(BaseQuestionGen):
                 **self.llm_params,
             )
 
+
+            generation_texts = [gen.text for gen in response.generations[0]]
             return QuestionResult(
-                response=response.split("\n"),
+                response=generation_texts,
                 context_data={
                     "question_context": question_text,
                     **context_records,

@@ -19,7 +19,7 @@ from graphrag.model import (
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
+from graphrag.query.llm.oai.embedding import OpenAIEmbedding, OpenAICompatibleOllamaEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
 from graphrag.query.structured_search.base import BaseSearch
 from graphrag.query.structured_search.global_search.community_context import (
@@ -82,7 +82,13 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
     else:
         cognitive_services_endpoint = config.embeddings.llm.cognitive_services_endpoint
     print(f"creating embedding llm client with {llm_debug_info}")  # noqa T201
-    return OpenAIEmbedding(
+
+    if config.embeddings.llm.api_key == "ollama":
+        EmbeddingClass = OpenAICompatibleOllamaEmbedding
+    else:
+        EmbeddingClass = OpenAIEmbedding
+
+    return EmbeddingClass(
         api_key=config.embeddings.llm.api_key,
         azure_ad_token_provider=(
             get_bearer_token_provider(
@@ -117,7 +123,6 @@ def get_local_search_engine(
     token_encoder = tiktoken.get_encoding(config.encoding_model)
 
     ls_config = config.local_search
-
     return LocalSearch(
         llm=llm,
         context_builder=LocalSearchMixedContext(
