@@ -200,7 +200,7 @@ embeddings:
     api_key: ollama
     type: openai_embedding
     model: nomic-embed-text
-    api_base: http://ollama:11434/api
+    api_base: http://ollama:11434
     # api_version: 2024-02-15-preview
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>

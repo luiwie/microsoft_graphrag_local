@@ -104,10 +104,10 @@ def cluster_graph(
 
     print("BEFORE:output_df[to]", output_df[to])
     # split the (level, graph) pairs into separate columns
-    # Ensure that the length of the lists matches the length of the DataFrame
-    exploded_df = output_df[to].apply(pd.Series)
-    output_df[level_to] = exploded_df[0]
-    output_df[to] = exploded_df[1]
+    # TODO: There is probably a better way to do this
+    output_df[[level_to, to]] = pd.DataFrame(
+        output_df[to].tolist(), index=output_df.index
+    )
 
     print("AFTER:output_df[to]", output_df[to])
     # clean up the community map
