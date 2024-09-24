@@ -167,7 +167,7 @@ llm:
   api_key: ollama
   type: openai_chat
   model: llama3.1
-  api_base: http://localhost:11434/v1
+  api_base: http://ollama:11434/v1
   model_supports_json: true # recommended if this is available for your model.
   # max_tokens: {defs.LLM_MAX_TOKENS}
   # request_timeout: {defs.LLM_REQUEST_TIMEOUT}
@@ -200,7 +200,7 @@ embeddings:
     api_key: ollama
     type: openai_embedding
     model: nomic-embed-text
-    api_base: http://localhost:11434/api
+    api_base: http://ollama:11434/api
     # api_version: 2024-02-15-preview
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
