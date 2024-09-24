@@ -101,12 +101,15 @@ def cluster_graph(
     # explode the list of (level, graph) pairs into separate rows
     output_df = output_df.explode(to, ignore_index=True)
 
-    # split the (level, graph) pairs into separate columns
-    # TODO: There is probably a better way to do this
-    output_df[[level_to, to]] = pd.DataFrame(
-        output_df[to].tolist(), index=output_df.index
-    )
 
+    print("BEFORE:output_df[to]", output_df[to])
+    # split the (level, graph) pairs into separate columns
+    # Ensure that the length of the lists matches the length of the DataFrame
+    exploded_df = output_df[to].apply(pd.Series)
+    output_df[level_to] = exploded_df[0]
+    output_df[to] = exploded_df[1]
+
+    print("AFTER:output_df[to]", output_df[to])
     # clean up the community map
     output_df.drop(columns=[community_map_to], inplace=True)
 
