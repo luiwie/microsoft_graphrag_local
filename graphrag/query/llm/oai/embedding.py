@@ -7,7 +7,7 @@ import asyncio
 from collections.abc import Callable
 from typing import Any
 
-import ollama
+
 import numpy as np
 import tiktoken
 from tenacity import (
@@ -18,7 +18,7 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential_jitter,
 )
-
+from langchain_community.embeddings import OllamaEmbeddings
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.base import OpenAILLMImpl
 from graphrag.query.llm.oai.typing import (
@@ -63,6 +63,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             reporter=reporter,
         )
 
+        self.api_base = api_base
         self.model = model
         self.encoding_name = encoding_name
         self.max_tokens = max_tokens
@@ -189,11 +190,13 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
 
 class OpenAICompatibleOllamaEmbedding(OpenAIEmbedding):
     def __init__(self, model: str = "nomic-embed-text", *args, **kwargs):
-        self.model = model
         super().__init__(model=model, *args, **kwargs)
+        self.model = model
+        self.embedder = OllamaEmbeddings(model=self.model, base_url=self.api_base)
 
     def _embed(self, text: str):
-        return ollama.embeddings(model=self.model, prompt=text)["embedding"]
+        embedding = self.embedder.embed_query(text)
+        return embedding
     
     async def _ambed(self, text: str):
-        return ollama.embeddings(model=self.model, prompt=text)["embedding"]
+        return await self.embedder.aembed_query(text)
