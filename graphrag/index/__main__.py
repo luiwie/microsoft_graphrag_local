@@ -105,7 +105,9 @@ if __name__ == "__main__":
     if args.resume and args.update_index:
         msg = "Cannot resume and update a run at the same time"
         raise ValueError(msg)
-
+    print("=" * 100)
+    print(f"args: {args}")
+    print("=" * 100)
     index_cli(
         root_dir=args.root,
         verbose=args.verbose,

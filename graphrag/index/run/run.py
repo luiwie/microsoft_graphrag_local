@@ -246,7 +246,7 @@ async def run_pipeline(
         for workflow_to_run in workflows_to_run:
             # Try to flush out any intermediate dataframes
             gc.collect()
-
+            print("workflow_to_run.workflow.name", workflow_to_run.workflow.name)
             last_workflow = workflow_to_run.workflow.name
             result = await _process_workflow(
                 workflow_to_run.workflow,
