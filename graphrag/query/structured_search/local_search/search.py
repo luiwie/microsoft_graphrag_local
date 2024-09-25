@@ -159,6 +159,10 @@ class LocalSearch(BaseSearch):
             search_prompt = self.system_prompt.format(
                 context_data=context_text, response_type=self.response_type
             )
+            print("="*100)
+            print(f"search_prompt: {search_prompt}")
+            print("="*100)
+            
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
