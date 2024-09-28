@@ -34,6 +34,9 @@ class InputConfig(BaseModel):
         description="The input file encoding to use.",
         default=defs.INPUT_FILE_ENCODING,
     )
+    delimiter: str | None = Field(
+        description="The input file delimiter to use.", default=defs.INPUT_DELIMITER
+    )
     file_pattern: str = Field(
         description="The input file pattern to use.", default=defs.INPUT_TEXT_PATTERN
     )

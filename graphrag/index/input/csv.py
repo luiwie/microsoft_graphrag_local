@@ -32,10 +32,14 @@ async def load(
     log.info("Loading csv files from %s", csv_config.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
-        if group is None:
+        if group is None: 
             group = {}
         buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding or "latin-1")
+        
+        logging.info(f"config: {config}")
+        data = pd.read_csv(buffer, encoding=config.encoding or "latin-1", sep=config.delimiter or ",")
+
+        logging.info(f"Loaded data: {data}")
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(
@@ -129,7 +133,8 @@ async def load(
         try:
             files_loaded.append(await load_file(file, group))
         except Exception:  # noqa: BLE001 (catching Exception is fine here)
-            log.warning("Warning! Error loading csv file %s. Skipping...", file)
+            import traceback
+            log.warning("Warning! Error loading csv file %s. Skipping...", file, traceback.format_exc())
 
     log.info("Found %d csv files, loading %d", len(files), len(files_loaded))
     result = pd.concat(files_loaded)

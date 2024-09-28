@@ -189,6 +189,7 @@ async def local_search(
         config.embeddings.vector_store if config.embeddings.vector_store else {}
     )
     reporter.info(f"Vector Store Args: {vector_store_args}")
+    reporter.info(f"Config: {config}")
 
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 

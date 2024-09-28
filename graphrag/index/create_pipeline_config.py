@@ -432,6 +432,7 @@ def _get_pipeline_input_config(
                 base_dir=settings.input.base_dir,
                 file_pattern=settings.input.file_pattern,
                 encoding=settings.input.encoding,
+                delimiter=settings.input.delimiter,
                 source_column=settings.input.source_column,
                 timestamp_column=settings.input.timestamp_column,
                 timestamp_format=settings.input.timestamp_format,

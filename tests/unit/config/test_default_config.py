@@ -683,6 +683,7 @@ class TestDefaultConfig(unittest.TestCase):
                 input=InputConfigInput(
                     file_type=InputFileType.text,
                     file_encoding="utf-16",
+                    delimiter=",",
                     document_attribute_columns=["test1", "test2"],
                     base_dir="/some/input/dir",
                     connection_string="input_cs",

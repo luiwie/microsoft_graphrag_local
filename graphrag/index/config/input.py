@@ -70,11 +70,15 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     )
     """The encoding for the input files."""
 
-
 class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputFileType.csv]]):
     """Represent the configuration for a CSV input."""
 
     file_type: Literal[InputFileType.csv] = InputFileType.csv
+
+    delimiter: str | None = pydantic_Field(
+        description="The delimiter for the input files.", default=None
+    )
+    """The delimiter for the input files."""
 
     source_column: str | None = pydantic_Field(
         description="The column to use as the source of the document.", default=None

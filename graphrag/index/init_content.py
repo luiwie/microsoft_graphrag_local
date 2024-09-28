@@ -65,6 +65,7 @@ input:
   file_type: {defs.INPUT_FILE_TYPE.value} # or csv
   base_dir: "{defs.INPUT_BASE_DIR}"
   file_encoding: {defs.INPUT_FILE_ENCODING}
+  delimiter: "{defs.INPUT_DELIMITER}"
   file_pattern: ".*\\\\.txt$"
 
 cache:
@@ -221,6 +222,7 @@ input:
   file_type: {defs.INPUT_FILE_TYPE.value} # or csv
   base_dir: "{defs.INPUT_BASE_DIR}"
   file_encoding: {defs.INPUT_FILE_ENCODING}
+  delimiter: "{defs.INPUT_DELIMITER}"
   file_pattern: ".*\\\\.txt$"
 
 cache:

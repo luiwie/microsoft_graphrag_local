@@ -17,6 +17,7 @@ class InputConfigInput(TypedDict):
     connection_string: NotRequired[str | None]
     container_name: NotRequired[str | None]
     file_encoding: NotRequired[str | None]
+    delimiter: NotRequired[str | None]
     file_pattern: NotRequired[str | None]
     source_column: NotRequired[str | None]
     timestamp_column: NotRequired[str | None]

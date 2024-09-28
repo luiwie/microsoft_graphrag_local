@@ -333,6 +333,7 @@ def create_graphrag_config(
                 type=(InputType(input_type) if input_type else defs.INPUT_TYPE),
                 encoding=reader.str("file_encoding", Fragment.encoding)
                 or defs.INPUT_FILE_ENCODING,
+                delimiter=reader.str("delimiter") or defs.INPUT_DELIMITER,
                 base_dir=reader.str(Fragment.base_dir) or defs.INPUT_BASE_DIR,
                 file_pattern=reader.str("file_pattern")
                 or (

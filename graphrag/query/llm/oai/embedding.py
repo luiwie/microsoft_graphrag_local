@@ -155,7 +155,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             # TODO: why not just throw in this case?
             return ([], 0)
 
-    async def _aembed(self, text):
+    async def _aembed(self, text, **kwargs):
         return (
             await self.async_client.embeddings.create(  # type: ignore
                     input=text,
@@ -176,7 +176,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             async for attempt in retryer:
                 with attempt:
-                    embedding = await self._aembed(text=text)
+                    embedding = await self._aembed(text=text, **kwargs)
                     return (embedding, len(text))
         except RetryError as e:
             self._reporter.error(

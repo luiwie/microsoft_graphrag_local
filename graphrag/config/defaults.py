@@ -62,6 +62,7 @@ INPUT_FILE_TYPE = InputFileType.text
 INPUT_TYPE = InputType.file
 INPUT_BASE_DIR = "input"
 INPUT_FILE_ENCODING = "utf-8"
+INPUT_DELIMITER = ","
 INPUT_TEXT_COLUMN = "text"
 INPUT_CSV_PATTERN = ".*\\.csv$"
 INPUT_TEXT_PATTERN = ".*\\.txt$"

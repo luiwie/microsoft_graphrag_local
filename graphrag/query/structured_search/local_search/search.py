@@ -7,8 +7,10 @@ import logging
 import time
 from collections.abc import AsyncGenerator
 from typing import Any
-
 import tiktoken
+import logging 
+
+logging.basicConfig(level=logging.INFO)
 
 from graphrag.query.context_builder.builders import LocalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
@@ -75,7 +77,9 @@ class LocalSearch(BaseSearch):
             search_prompt = self.system_prompt.format(
                 context_data=context_text, response_type=self.response_type
             )
-            
+            logging.info("="*100)
+            logging.info(f"search_prompt: {search_prompt}")
+            logging.info("="*100)
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
@@ -125,6 +129,7 @@ class LocalSearch(BaseSearch):
         search_prompt = self.system_prompt.format(
             context_data=context_text, response_type=self.response_type
         )
+    
         search_messages = [
             {"role": "system", "content": search_prompt},
             {"role": "user", "content": query},
@@ -159,10 +164,10 @@ class LocalSearch(BaseSearch):
             search_prompt = self.system_prompt.format(
                 context_data=context_text, response_type=self.response_type
             )
-            print("="*100)
-            print(f"search_prompt: {search_prompt}")
-            print("="*100)
-            
+            logging.info("="*100)
+            logging.info(f"search_prompt: {search_prompt}")
+            logging.info("="*100)
+
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
