@@ -104,7 +104,13 @@ class RichProgressReporter(ProgressReporter):
 
     def refresh(self) -> None:
         """Perform a debounced refresh."""
-        now = asyncio.get_event_loop().time()
+        try:
+            now = asyncio.get_event_loop().time()
+        except:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            now = loop.time()
+            
         duration = now - self._last_refresh
         if duration > 0.1:
             self._last_refresh = now

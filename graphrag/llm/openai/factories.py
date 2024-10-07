@@ -21,7 +21,7 @@ from .json_parsing_llm import JsonParsingLLM
 from .openai_chat_llm import OpenAIChatLLM
 from .openai_completion_llm import OpenAICompletionLLM
 from .openai_configuration import OpenAIConfiguration
-from .openai_embeddings_llm import OpenAIEmbeddingsLLM
+from .openai_embeddings_llm import OpenAIEmbeddingsLLM, OpenAIComaptibleOllamaEmbeddingsLLM
 from .openai_history_tracking_llm import OpenAIHistoryTrackingLLM
 from .openai_token_replacing_llm import OpenAITokenReplacingLLM
 from .types import OpenAIClientTypes
@@ -93,7 +93,10 @@ def create_openai_embedding_llm(
 ) -> EmbeddingLLM:
     """Create an OpenAI embeddings LLM."""
     operation = "embedding"
-    result = OpenAIEmbeddingsLLM(client, config)
+    if config.api_key == "ollama":
+        result = OpenAIComaptibleOllamaEmbeddingsLLM(client, config)
+    else:
+        result = OpenAIEmbeddingsLLM(client, config)
     result.on_error(on_error)
     if limiter is not None or semaphore is not None:
         result = _rate_limited(result, config, operation, limiter, semaphore, on_invoke)

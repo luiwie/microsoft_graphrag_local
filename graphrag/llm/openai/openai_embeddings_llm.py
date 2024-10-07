@@ -16,6 +16,7 @@ from .types import OpenAIClientTypes
 from graphrag.query.llm.oai.typing import OpenaiApiType
 import logging
 logging.basicConfig(level=logging.INFO)
+
 class OpenAIEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
     """A text-embedding generator LLM."""
 
@@ -26,6 +27,31 @@ class OpenAIEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
         self.client = client
         self.configuration = configuration
         logging.info(f"OpenAIEmbeddingsLLM initialized with configuration: {self.configuration}")
+
+    async def _execute_llm(
+        self, input: EmbeddingInput, **kwargs: Unpack[LLMInput]
+    ) -> EmbeddingOutput | None:
+        args = {
+            "model": self.configuration.model,
+            **(kwargs.get("model_parameters") or {}),
+        }
+        embedding = await self.client.embeddings.create(
+            input=input,
+            **args,
+        )
+        return [d.embedding for d in embedding.data]
+
+
+class OpenAIComaptibleOllamaEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
+    """A text-embedding generator LLM using Ollama."""
+
+    _client: OpenAIClientTypes
+    _configuration: OpenAIConfiguration
+
+    def __init__(self, client: OpenAIClientTypes, configuration: OpenAIConfiguration):
+        self.client = client
+        self.configuration = configuration
+        logging.info(f"OpenAIComaptibleOllamaEmbeddingsLLM initialized with configuration: {self.configuration}")
         self.text_embedder = OpenAICompatibleOllamaEmbedding(
             api_key=self.configuration.api_key,
             api_base=self.configuration.api_base,
@@ -42,5 +68,5 @@ class OpenAIEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
         for inp in input:
             embedding_list.append(self.text_embedder.embed(inp,**kwargs))
         return embedding_list
-
-
+    
+    
