@@ -173,20 +173,21 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 )
 
         # build community context
-        community_tokens = max(int(max_tokens * community_prop), 0)
-        community_context, community_context_data = self._build_community_context(
-            selected_entities=selected_entities,
-            max_tokens=community_tokens,
-            use_community_summary=use_community_summary,
-            column_delimiter=column_delimiter,
-            include_community_rank=include_community_rank,
-            min_community_rank=min_community_rank,
-            return_candidate_context=return_candidate_context,
-            context_name=community_context_name,
-        )
-        if community_context.strip() != "":
-            final_context.append(community_context)
-            final_context_data = {**final_context_data, **community_context_data}
+        # TODO: readd
+        # community_tokens = max(int(max_tokens * community_prop), 0)
+        # community_context, community_context_data = self._build_community_context(
+        #     selected_entities=selected_entities,
+        #     max_tokens=community_tokens,
+        #     use_community_summary=use_community_summary,
+        #     column_delimiter=column_delimiter,
+        #     include_community_rank=include_community_rank,
+        #     min_community_rank=min_community_rank,
+        #     return_candidate_context=return_candidate_context,
+        #     context_name=community_context_name,
+        # )
+        # if community_context.strip() != "":
+        #     final_context.append(community_context)
+        #     final_context_data = {**final_context_data, **community_context_data}
 
         # build local (i.e. entity-relationship-covariate) context
         local_prop = 1 - community_prop - text_unit_prop
@@ -207,15 +208,16 @@ class LocalSearchMixedContext(LocalContextBuilder):
             final_context_data = {**final_context_data, **local_context_data}
 
         # build text unit context
-        text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
-        text_unit_context, text_unit_context_data = self._build_text_unit_context(
-            selected_entities=selected_entities,
-            max_tokens=text_unit_tokens,
-            return_candidate_context=return_candidate_context,
-        )
-        if text_unit_context.strip() != "":
-            final_context.append(text_unit_context)
-            final_context_data = {**final_context_data, **text_unit_context_data}
+        # TODO: readd
+        # text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
+        # text_unit_context, text_unit_context_data = self._build_text_unit_context(
+        #     selected_entities=selected_entities,
+        #     max_tokens=text_unit_tokens,
+        #     return_candidate_context=return_candidate_context,
+        # )
+        # if text_unit_context.strip() != "":
+        #     final_context.append(text_unit_context)
+        #     final_context_data = {**final_context_data, **text_unit_context_data}
 
         return ("\n\n".join(final_context), final_context_data)
 
