@@ -14,7 +14,7 @@ from rich.spinner import Spinner
 from rich.tree import Tree
 
 from .types import ProgressReporter
-
+from typing import Callable, Optional
 
 # https://stackoverflow.com/a/34325723
 class RichProgressReporter(ProgressReporter):
@@ -61,9 +61,11 @@ class RichProgressReporter(ProgressReporter):
         prefix: str,
         parent: "RichProgressReporter | None" = None,
         transient: bool = True,
+        update_state_func: Optional[Callable] = None
     ) -> None:
         """Create a new rich-based progress reporter."""
         self._prefix = prefix
+        self.update_state_func = update_state_func
 
         if parent is None:
             console = Console()
@@ -126,7 +128,7 @@ class RichProgressReporter(ProgressReporter):
 
     def child(self, prefix: str, transient: bool = True) -> ProgressReporter:
         """Create a child progress bar."""
-        return RichProgressReporter(parent=self, prefix=prefix, transient=transient)
+        return RichProgressReporter(parent=self, prefix=prefix, transient=transient, update_state_func=self.update_state_func)
 
     def error(self, message: str) -> None:
         """Report an error."""
@@ -159,6 +161,13 @@ class RichProgressReporter(ProgressReporter):
 
         completed = progress_update.completed_items or progress_update.percent
         total = progress_update.total_items or 1
+
+        if self.update_state_func is not None:
+            self.update_state_func(
+                state="PROGRESS", 
+                meta={"progress": (completed / total) * 100, "step": f"{self._prefix}{progress_description}"}
+            )
+            self.warning(f"Graph-update_state_func-{completed}_{total}-{progress_description}")
         progressbar.update(
             self._task,
             completed=completed,

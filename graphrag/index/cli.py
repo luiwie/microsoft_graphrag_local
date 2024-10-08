@@ -10,7 +10,7 @@ import sys
 import time
 import warnings
 from pathlib import Path
-
+from typing import Callable, Optional
 from graphrag.config import (
     CacheType,
     enable_logging_with_config,
@@ -117,9 +117,10 @@ def index_cli(
     dryrun: bool,
     skip_validations: bool,
     output_dir: str | None,
+    update_state_func: Optional[Callable] = None,
 ):
     """Run the pipeline with the given config."""
-    progress_reporter = load_progress_reporter(reporter)
+    progress_reporter = load_progress_reporter(reporter, update_state_func=update_state_func)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 

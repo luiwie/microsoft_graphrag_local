@@ -10,10 +10,10 @@ from .types import (
     ProgressReporter,
     ReporterType,
 )
-
+from typing import Callable, Optional
 
 def load_progress_reporter(
-    reporter_type: ReporterType = ReporterType.NONE,
+    reporter_type: ReporterType = ReporterType.NONE, update_state_func: Optional[Callable] = None
 ) -> ProgressReporter:
     """Load a progress reporter.
 
@@ -28,7 +28,7 @@ def load_progress_reporter(
     """
     match reporter_type:
         case ReporterType.RICH:
-            return RichProgressReporter("GraphRAG Indexer ")
+            return RichProgressReporter("GraphRAG Indexer ", update_state_func=update_state_func)
         case ReporterType.PRINT:
             return PrintProgressReporter("GraphRAG Indexer ")
         case ReporterType.NONE:

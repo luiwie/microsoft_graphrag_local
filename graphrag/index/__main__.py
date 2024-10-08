@@ -120,5 +120,6 @@ if __name__ == "__main__":
         init=args.init,
         skip_validations=args.skip_validations,
         output_dir=args.output,
-        local=args.local
+        local=args.local,
+        update_state_func=None
     )
