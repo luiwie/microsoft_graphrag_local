@@ -167,7 +167,6 @@ class RichProgressReporter(ProgressReporter):
                 state="PROGRESS", 
                 meta={"progress": (completed / total) * 100, "step": f"{self._prefix}{progress_description}"}
             )
-            self.warning(f"Graph-update_state_func-{completed}_{total}-{progress_description}")
         progressbar.update(
             self._task,
             completed=completed,

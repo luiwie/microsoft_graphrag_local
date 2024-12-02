@@ -144,6 +144,12 @@ class RateLimitingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
             nonlocal call_times
             call_start = asyncio.get_event_loop().time()
             try:
+                call_start = asyncio.get_event_loop().time()
+            except:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                call_start = loop.time()
+            try:
                 return await self._delegate(input, **kwargs)
             except BaseException as e:
                 if isinstance(e, tuple(self._rate_limit_errors)):
@@ -152,6 +158,12 @@ class RateLimitingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
                 raise
             finally:
                 call_end = asyncio.get_event_loop().time()
+                try:
+                    call_end = asyncio.get_event_loop().time()
+                except:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    call_end = loop.time()
                 call_times.append(call_end - call_start)
 
         async def execute_with_retry() -> tuple[LLMOutput[TOut], float]:
@@ -160,7 +172,12 @@ class RateLimitingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
                 with attempt:
                     if self._rate_limiter and input_tokens > 0:
                         await self._rate_limiter.acquire(input_tokens)
-                    start = asyncio.get_event_loop().time()
+                    try:
+                        start = asyncio.get_event_loop().time()
+                    except:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        start = loop.time()
                     attempt_number += 1
                     return await do_attempt(), start
 
@@ -176,7 +193,13 @@ class RateLimitingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
             async with self._semaphore:
                 result, start = await execute_with_retry()
 
-        end = asyncio.get_event_loop().time()
+        try:
+            end = asyncio.get_event_loop().time()
+        except:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            end = loop.time()
+            
         output_tokens = self.count_response_tokens(result.output)
         if self._rate_limiter and output_tokens > 0:
             await self._rate_limiter.acquire(output_tokens)
