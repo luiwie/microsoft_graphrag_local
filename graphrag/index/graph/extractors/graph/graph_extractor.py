@@ -65,6 +65,7 @@ class GraphExtractor:
         encoding_model: str | None = None,
         max_gleanings: int | None = None,
         on_error: ErrorHandlerFn | None = None,
+        max_fails: int | None = None,
     ):
         """Init method definition."""
         # TODO: streamline construction
@@ -84,7 +85,7 @@ class GraphExtractor:
             else defs.ENTITY_EXTRACTION_MAX_GLEANINGS
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
-
+        self._max_fails = max_fails or defs.MAX_FAILS
         # Construct the looping arguments
         encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
         yes = encoding.encode("YES")
@@ -116,6 +117,7 @@ class GraphExtractor:
             ),
         }
 
+        n_fails = 0
         for doc_index, text in enumerate(texts):
             try:
                 # Invoke the entity extraction
@@ -123,6 +125,11 @@ class GraphExtractor:
                 source_doc_map[doc_index] = text
                 all_records[doc_index] = result
             except Exception as e:
+                # just let it fail!
+                n_fails += 1
+                if n_fails >= self._max_fails:
+                    raise e
+                
                 logging.exception("error extracting graph")
                 self._on_error(
                     e,

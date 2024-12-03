@@ -63,6 +63,7 @@ async def run_extract_entities(
     extraction_prompt = args.get("extraction_prompt", None)
     encoding_model = args.get("encoding_name", None)
     max_gleanings = args.get("max_gleanings", defs.ENTITY_EXTRACTION_MAX_GLEANINGS)
+    max_fails = args.get("max_fails", defs.MAX_FAILS)
 
     # note: We're not using UnipartiteGraphChain.from_params
     # because we want to pass "timeout" to the llm_kwargs
@@ -75,6 +76,7 @@ async def run_extract_entities(
         prompt=extraction_prompt,
         encoding_model=encoding_model,
         max_gleanings=max_gleanings,
+        max_fails=max_fails,
         on_error=lambda e, s, d: (
             reporter.error("Entity Extraction Error", e, s, d) if reporter else None
         ),
