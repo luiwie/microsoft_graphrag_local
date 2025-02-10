@@ -260,3 +260,7 @@ asyncio_mode = "auto"
 timeout = 800
 # log_cli = true
 # log_cli_level = "INFO"
+
+[project]
+dynamic = ["version"]
+name = "graphrag"
