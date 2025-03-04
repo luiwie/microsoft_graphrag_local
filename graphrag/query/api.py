@@ -218,9 +218,9 @@ async def local_search(
     )
 
     result: SearchResult = await search_engine.asearch(query=query)
-    response = result.response
-    context_data = _reformat_context_data(result.context_data)  # type: ignore
-    return response, context_data
+    # response = result.response
+    # context_data = _reformat_context_data(result.context_data)  # type: ignore
+    return result.response, result.context_text
 
 
 @validate_call(config={"arbitrary_types_allowed": True})

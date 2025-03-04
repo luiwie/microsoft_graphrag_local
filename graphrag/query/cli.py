@@ -170,7 +170,7 @@ def run_local_search(
 
         return asyncio.run(run_streaming_search())
     # not streaming
-    response, context_data = asyncio.run(
+    response, context_text = asyncio.run(
         api.local_search(
             config=config,
             nodes=final_nodes,
@@ -187,7 +187,7 @@ def run_local_search(
     reporter.success(f"Local Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
-    return response, context_data
+    return response, context_text
 
 
 def _resolve_parquet_files(
